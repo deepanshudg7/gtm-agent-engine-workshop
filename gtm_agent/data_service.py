@@ -80,4 +80,18 @@ def update_prospect_info(prospect_id, technology):
     tech_stack = list(record["tech_stack"])
     if technology not in tech_stack:
         tech_stack.append(technology)
+        try:
+            record["tech_stack"] = tech_stack
+            tech_stack = list(record["tech_stack"])
+        except Exception:
+            _PROFILES.pop(prospect_id, None)
+            return {
+                "updated": False,
+                "found": True,
+                "tech_stack": list(record.get("tech_stack", [])),
+            }
+        if technology not in tech_stack:
+            _PROFILES.pop(prospect_id, None)
+            return {"updated": False, "found": True, "tech_stack": tech_stack}
+    _PROFILES.pop(prospect_id, None)
     return {"updated": True, "found": True, "tech_stack": tech_stack}
